@@ -1,0 +1,11 @@
+{
+ "display_name": "AndrewPython", 
+ "language": "python2", 
+ "argv": [
+  "/usr/bin/python2", 
+  "-m", 
+  "andrewkernel", 
+  "-f", 
+  "{connection_file}"
+ ]
+}

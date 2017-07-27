@@ -6,11 +6,13 @@ JupyterHub is a tool allowing multiple users to spawn instances of a Jupyter Not
 This means that in demonstrations, users can access a SpiNNaker installation and use PyNN from any device, as long as they have a user account on the serving machine.
 
 ### Installing JupyterHub
-- Make sure all services are installed into the system as **root** instead of into a user directory so that all users can access it.
+Make sure all services are installed into the system as **root** instead of into a user directory so that all users can access it.
+
 - Install [Jupyter](http://jupyter.org/install.html) using `pip3` and `sudo` to ensure that Jupyter runs from a Python3 installation. Do not use Anaconda as it creates a Python installation in the local user directory.
 - Install [JupyterHub](https://jupyterhub.readthedocs.io/en/latest/) - requires Python3.4 or greater.
 - [Create](https://jupyterhub.readthedocs.io/en/latest/config-basics.html) a `jupyter_config.py` file and [add your user as admin](https://jupyterhub.readthedocs.io/en/latest/authenticators-users-basics.html)
 - Start JupyterHub by running `sudo jupyterhub` from the folder which contains the config file.
+
 By nature, root can control the amount of access users have. For more security, use a [HTTPS connection](https://jupyterhub.readthedocs.io/en/latest/security-basics.html)
 
 ### Using sPyNNaker8

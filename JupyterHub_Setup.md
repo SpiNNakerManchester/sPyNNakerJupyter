@@ -42,5 +42,5 @@ The kernel can then be used in a Notebook by selecting it from the dropdown.
     - `sudo passwd [username]`
 - Allow the connection through port `8000` in the firewall (note this is reset on reboot):
     - `sudo iptables -A INPUT -p tcp --dport 8000 -j ACCEPT`
-- Start the server. Anyone can access the server and login as a local user from `http://[your ip]:8000`
+- Start the server (see above). Anyone can access the server and login as a local user from `http://[your ip]:8000`
 

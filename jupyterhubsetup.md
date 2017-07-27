@@ -21,12 +21,16 @@ By nature, root can control the amount of access users have. For more security, 
 
 ## Custom Kernels
 A custom kernel has been created to provide additional commands to be used in the notebook. This works by intercepting the code sent by the notebook. The kernel runs **python2.7** so it's compatible with sPyNNaker.
+
 Current commands include:
+
     - `##printmysession` prints a record of all code run in the notebook since restart/reset, to provide easy debug.
     - `##rerun x y` executes all the code in cells between cell x and cell y, so you can for example rerun a set of setup cells without executing them individually. `##rerun x` just executes cell x.
+
 More commands can be easily added.
 
 The kernel (which runs python2.7) consists of:
+
     - The `.py` file which should be placed in the `python2.7/site-packages` folder
     - The kernel folder, which should be placed in either `/usr/local/share/jupyter/kernels/` or `/usr/share/jupyter/kernels` depending on your system.
 

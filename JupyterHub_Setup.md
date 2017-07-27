@@ -32,7 +32,7 @@ More commands can be easily added.
 The kernel (which runs python2.7) consists of:
 
 - The `.py` file which should be placed in the `python2.7/site-packages` folder
-- The kernel folder, which should be placed in either `/usr/local/share/jupyter/kernels/` or `/usr/share/jupyter/kernels` depending on your system.
+- The kernel folder containing the `kernel.json`, which should be placed in either `/usr/local/share/jupyter/kernels/` or `/usr/share/jupyter/kernels` depending on your system.
 
 The kernel can then be used in a Notebook by selecting it from the dropdown.
 

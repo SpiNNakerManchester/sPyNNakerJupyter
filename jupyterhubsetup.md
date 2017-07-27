@@ -24,15 +24,15 @@ A custom kernel has been created to provide additional commands to be used in th
 
 Current commands include:
 
-    - `##printmysession` prints a record of all code run in the notebook since restart/reset, to provide easy debug.
-    - `##rerun x y` executes all the code in cells between cell x and cell y, so you can for example rerun a set of setup cells without executing them individually. `##rerun x` just executes cell x.
+- `##printmysession` prints a record of all code run in the notebook since restart/reset, to provide easy debug.
+- `##rerun x y` executes all the code in cells between cell x and cell y, so you can for example rerun a set of setup cells without executing them individually. `##rerun x` just executes cell x.
 
 More commands can be easily added.
 
 The kernel (which runs python2.7) consists of:
 
-    - The `.py` file which should be placed in the `python2.7/site-packages` folder
-    - The kernel folder, which should be placed in either `/usr/local/share/jupyter/kernels/` or `/usr/share/jupyter/kernels` depending on your system.
+- The `.py` file which should be placed in the `python2.7/site-packages` folder
+- The kernel folder, which should be placed in either `/usr/local/share/jupyter/kernels/` or `/usr/share/jupyter/kernels` depending on your system.
 
 The kernel can then be used in a Notebook by selecting it from the dropdown.
 

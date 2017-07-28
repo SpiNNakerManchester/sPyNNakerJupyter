@@ -32,7 +32,7 @@ class AndrewKernel(IPythonKernel):
 		# Print the record of everything run since restart/reset for debug
         if "##printmysession" in code_lower:
             for blockNo in self.currentCode:
-                print "#block {0}\n{1}\n".format(blockNo, self.currentCode[blockNo])
+                print "#block {0}\n{1}\n".format(blockNo, self.currentCode[blockNo].encode("utf-8"))
             return
 
         # Rerun block(s) of code (i.e. ##rerun 2 4 executes 2,3,4)

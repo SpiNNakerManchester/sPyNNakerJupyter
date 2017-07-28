@@ -25,6 +25,9 @@ A custom kernel has been created to provide additional commands to be used in th
 Current commands include:
 
 - `##printmysession` prints a record of all code run in the notebook since restart/reset, to provide easy debug.
+- `##printmyout` prints a record of all output sent to stdout or stderr from each cell (if recording is on).
+- `##printmysessionout` etc. does both of these in one, to provide easy debug.
+- `##recordoutput[on/off]` toggles between recording output or not. Note when recording output, *images are disabled* and output is not shown linearly to the user. Default off.
 - `##rerun x y` executes all the code in cells between cell x and cell y, so you can for example rerun a set of setup cells without executing them individually. `##rerun x` just executes cell x.
 
 More commands can be easily added.

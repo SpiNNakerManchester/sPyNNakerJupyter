@@ -4,13 +4,13 @@ Place the suitable kernel folder in either /usr/local/share/jupyter/kernels or /
 '''
 
 from ipykernel.ipkernel import IPythonKernel
+from IPython.utils import io
 
 class AndrewKernel(IPythonKernel):
 	
     #executed jupyter commands are saved here in order as a record 
-    currentCode = {}
+    currentCode = {} #  { count:[code, stdout, stderr] } 
     
-	
     #override ipkernel methods
 	
     def start(self):   
@@ -23,8 +23,22 @@ class AndrewKernel(IPythonKernel):
 		
         code_lower = code.lower()
 		
+        # Function for calling base class's execution method
         def super_execute(execcode):
-            return super(AndrewKernel, self).do_execute(code=execcode, silent=silent, store_history=store_history, user_expressions=user_expressions, allow_stdin=allow_stdin)
+            
+            #capture stdout and stderr
+            with io.capture_output() as captured:                  
+                res = super(AndrewKernel, self).do_execute(code=execcode, silent=silent, store_history=store_history, user_expressions=user_expressions, allow_stdin=allow_stdin)        
+            
+            #show stdout and stderr to user
+            if captured.stdout != "":
+                print captured.stdout
+            if captured.stderr != "":
+                print captured.stderr
+            
+            #add to my code record    
+            self.currentCode[self.execution_count - 1] = [execcode, str(captured.stdout), str(captured.stderr)]
+            return res
         
         if "%reset" in code_lower:
             self.currentCode = {}
@@ -32,7 +46,14 @@ class AndrewKernel(IPythonKernel):
 		# Print the record of everything run since restart/reset for debug
         if "##printmysession" in code_lower:
             for blockNo in self.currentCode:
-                print "#block {0}\n{1}\n".format(blockNo, self.currentCode[blockNo].encode("utf-8"))
+                blockCode = self.currentCode[blockNo]
+                print "####################### BLOCK {0} #######################\n{1}\n".format(blockNo, blockCode[0].encode("utf-8"))
+                
+                if blockCode[1] != "":
+                    print "##CAPTURED STDOUT##\n{0}".format(blockCode[1].encode("utf-8"))
+                if blockCode[2] != "":
+                    print "##CAPTURED STDERR##\n{0}".format(blockCode[2].encode("utf-8"))
+                
             return
 
         # Rerun block(s) of code (i.e. ##rerun 2 4 executes 2,3,4)
@@ -47,13 +68,10 @@ class AndrewKernel(IPythonKernel):
                 if i in self.currentCode.keys():
                     
                     #re-execute blocks of code from the record
-                    self.currentCode[self.execution_count] = self.currentCode[i]
-                    super_execute(self.currentCode[i])      
+                    super_execute(self.currentCode[i][0])      
             return
         
-        
-        self.currentCode[self.execution_count] = code
-        
+               
         return super_execute(code)
         
         

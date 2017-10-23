@@ -6,30 +6,30 @@ This document details the installation of a JupyterHub system for running the sP
 
 1. JupyterHub requires Python 3.4 to be installed, as well as npm and nodejs-legacy.  On an Ubuntu system, these are installed using:
 
-    sudo apt-get install python3 npm nodejs-legacy
+        sudo apt-get install python3 npm nodejs-legacy
 
 1. It is additionally useful to install pip:
 
-    wget https://bootstrap.pypa.io/get-pip.py
-    python3 get-pip.py
+        wget https://bootstrap.pypa.io/get-pip.py
+        python3 get-pip.py
     
 1. This might result in pip for python 2 being overridden if installed.  If so, you can correct this:
 
-    rm /usr/local/bin/pip
-    ln -s /usr/local/bin/pip2 /usr/local/bin/pip
+        rm /usr/local/bin/pip
+        ln -s /usr/local/bin/pip2 /usr/local/bin/pip
 
 1. You can now install JupyterHub:
 
-    python3 -m pip install jupyterhub
-    npm install -g configurable-http-proxy
+        python3 -m pip install jupyterhub
+        npm install -g configurable-http-proxy
     
 1. Install Docker Spawner (launches a Docker for each user):
 
-    python3 -m pip install dockerspawner
+        python3 -m pip install dockerspawner
     
 1. Install First Use Authenticator (First time a username is used, any password can be used, but that is then kept for future uses):
 
-    python3 -m pip install jupyterhub-firstuseauthenticator
+        python3 -m pip install jupyterhub-firstuseauthenticator
 
 
 ## Install Docker
@@ -38,17 +38,17 @@ The sPyNNaker setup uses a Docker image launched for each client.  To set this u
 
 1. Install docker:
 
-    sudo apt-get install docker.io
+        sudo apt-get install docker.io
 
 1. Get the JupyterHub image:
 
-	docker pull jupyterhub/single-user:0.8
+        docker pull jupyterhub/single-user:0.8
 
 1. Copy the sPyNNakerDocker folder from this repository.
 
 1. Set up the docker image:
 
-    docker build -t spynnaker sPyNNakerDocker/
+        docker build -t spynnaker sPyNNakerDocker/
 
 
 ## Set up JupyterHub

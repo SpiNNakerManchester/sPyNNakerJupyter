@@ -46,6 +46,8 @@ The sPyNNaker setup uses a Docker image launched for each client.  To set this u
 
 1. Copy the sPyNNakerDocker folder from this repository.
 
+1. Update the ```.spynnaker.cfg``` file to the appropriate values for your setup.  You should have a [spalloc server](https://spalloc_server.readthedocs.io/) set up, and you should update the address of this in the config file.
+
 1. Set up the docker image:
 
         docker build -t spynnaker sPyNNakerDocker/
@@ -53,7 +55,9 @@ The sPyNNaker setup uses a Docker image launched for each client.  To set this u
 
 ## Set up JupyterHub
 
-The file ```jupyterhub_config``` in the root of this repository contains the configuration that will launch the ```spynnaker``` docker instance for each user that logs in, and will authenticate each user using the First Use Authenticator.
+The file ```jupyterhub_config.py``` in the root of this repository contains the configuration that will launch the ```spynnaker``` docker instance for each user that logs in, and will authenticate each user using the First Use Authenticator.
+
+Update the ```jupyterhub_config.py``` file, replacing the IP address for the value ```c.DockerSpawner.hub_ip_connect``` with the IP address of your server.
 
 
 ## Run JupyterHub

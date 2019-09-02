@@ -1,0 +1,123 @@
+# This file must be used with "source bin/activate" *from bash*
+# you cannot run it directly
+
+if [ "${BASH_SOURCE-}" = "$0" ]; then
+    echo "You must source this script: \$ source $0" >&2
+    exit 33
+fi
+
+deactivate () {
+    unset -f pydoc >/dev/null 2>&1
+
+    # reset old environment variables
+    if ! [ -z "${_OLD_NEURAL_MODELLING_DIRS:+_}" ] ; then
+        NEURAL_MODELLING_DIRS="$_OLD_NEURAL_MODELLING_DIRS"
+        export NEURAL_MODELLING_DIRS
+        unset _OLD_NEURAL_MODELLING_DIRS
+    else
+        unset NEURAL_MODELLING_DIRS
+    fi
+    if ! [ -z "${_OLD_SPINN_DIRS:+_}" ] ; then
+        SPINN_DIRS="$_OLD_SPINN_DIRS"
+        export SPINN_DIRS
+        unset _OLD_SPINN_DIRS
+    else
+        unset SPINN_DIRS
+    fi
+    if ! [ -z "${_OLD_PERL5LIB:+_}" ] ; then
+        PERL5LIB="$_OLD_PERL5LIB"
+        export PERL5LIB
+        unset _OLD_PERL5LIB
+    else
+        unset PERL5LIB
+    fi
+    # ! [ -z ${VAR+_} ] returns true if VAR is declared at all
+    if ! [ -z "${_OLD_VIRTUAL_PATH:+_}" ] ; then
+        PATH="$_OLD_VIRTUAL_PATH"
+        export PATH
+        unset _OLD_VIRTUAL_PATH
+    fi
+    if ! [ -z "${_OLD_VIRTUAL_PYTHONHOME+_}" ] ; then
+        PYTHONHOME="$_OLD_VIRTUAL_PYTHONHOME"
+        export PYTHONHOME
+        unset _OLD_VIRTUAL_PYTHONHOME
+    fi
+
+    # This should detect bash and zsh, which have a hash command that must
+    # be called to get it to forget past commands.  Without forgetting
+    # past commands the $PATH changes we made may not be respected
+    if [ -n "${BASH-}" ] || [ -n "${ZSH_VERSION-}" ] ; then
+        hash -r 2>/dev/null
+    fi
+
+    if ! [ -z "${_OLD_VIRTUAL_PS1+_}" ] ; then
+        PS1="$_OLD_VIRTUAL_PS1"
+        export PS1
+        unset _OLD_VIRTUAL_PS1
+    fi
+
+    unset VIRTUAL_ENV
+    if [ ! "${1-}" = "nondestructive" ] ; then
+    # Self destruct!
+        unset -f deactivate
+    fi
+}
+
+# unset irrelevant variables
+deactivate nondestructive
+
+VIRTUAL_ENV="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
+BASE_NAME="$(basename "$VIRTUAL_ENV")"
+export VIRTUAL_ENV
+
+_OLD_VIRTUAL_PATH="$PATH"
+PATH="$VIRTUAL_ENV/bin:$VIRTUAL_ENV/spinnaker_tools/tools/:$PATH"
+export PATH
+
+# unset PYTHONHOME if set
+if ! [ -z "${PYTHONHOME+_}" ] ; then
+    _OLD_VIRTUAL_PYTHONHOME="$PYTHONHOME"
+    unset PYTHONHOME
+fi
+
+if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT-}" ] ; then
+    _OLD_VIRTUAL_PS1="${PS1-}"
+    if [ "x" != x ] ; then
+        PS1="${PS1-}"
+    else
+        PS1="(`basename \"$VIRTUAL_ENV\"`) ${PS1-}"
+    fi
+    export PS1
+fi
+
+if ! [ -z "${PERL5LIB+_}" ] ; then
+    _OLD_PERL5LIB="$PERL5LIB"
+fi
+PERL5LIB="$VIRTUAL_ENV/spinnaker_tools/tools/:$PERL5LIB"
+export PERL5LIB
+
+if ! [ -z "${SPINN_DIRS+_}" ] ; then
+    _OLD_SPINN_DIRS="$SPINN_DIRS"
+fi
+SPINN_DIRS="$VIRTUAL_ENV/spinnaker_tools"
+export SPINN_DIRS
+
+if ! [ -z "${NEURAL_MODELLING_DIRS+_}" ] ; then
+    _OLD_NEURAL_MODELLING_DIRS="$NEURAL_MODELLING_DIRS"
+fi
+NEURAL_MODELLING_DIRS="$VIRTUAL_ENV/sPyNNaker/neural_modelling/"
+export NEURAL_MODELLING_DIRS
+
+# Make sure to unalias pydoc if it's already there
+alias pydoc 2>/dev/null >/dev/null && unalias pydoc || true
+
+pydoc () {
+    python -m pydoc "$@"
+}
+
+# This should detect bash and zsh, which have a hash command that must
+# be called to get it to forget past commands.  Without forgetting
+# past commands the $PATH changes we made may not be respected
+if [ -n "${BASH-}" ] || [ -n "${ZSH_VERSION-}" ] ; then
+    hash -r 2>/dev/null
+fi

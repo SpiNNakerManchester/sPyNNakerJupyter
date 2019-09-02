@@ -56,24 +56,29 @@
 #    and `data` is the POST form data from the login page.
 #c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
 
-c.JupyterHub.authenticator_class = 'firstuseauthenticator.FirstUseAuthenticator'
-c.JupyterHub.FirstUseAuthenticator.dbm_path = 'passwordsgit.dbm'
+#c.JupyterHub.authenticator_class = 'firstuseauthenticator.FirstUseAuthenticator'
+c.FirstUseAuthenticator.dbm_path = 'passwords.dbm'
 
-#from oauthenticator.generic import GenericOAuthenticator
-#c.JupyterHub.authenticator_class = GenericOAuthenticator
+# from oauthenticator.generic import GenericOAuthenticator
+# c.JupyterHub.authenticator_class = GenericOAuthenticator
+
+from multiauth.multiauth import MultiAuthenticator
+c.JupyterHub.authenticator_class = MultiAuthenticator
 
 #c.OAuthenticator.oauth_callback_url = 'https://services.humanbrainproject.eu/oidc/authorize'
 #c.OAuthenticator.oauth_callback_url = 'http://192.168.240.254:8000/hub/oauth_callback'
 #c.OAuthenticator.oauth_callback_url = 'http://mclb03.cs.man.ac.uk:8000/hub/oauth_callback'
-#c.OAuthenticator.client_id = 'd3ce651a-e98f-4b90-948f-328d8ad593f2'
-#c.OAuthenticator.scope = ['openid']
-#c.GenericOAuthenticator.client_secret = 'AJVNOVlsk7BLvJIUKWzq9w4GYR8RIbSpNyvr71JrIFeMbQg0aCU5k_Nr8Adwu9xxYbLK3N8hyDLncMmtW8K3gRo'
-#c.GenericOAuthenticator.token_url = 'https://services.humanbrainproject.eu/oidc/token'
-#c.GenericOAuthenticator.userdata_url = 'https://services.humanbrainproject.eu/oidc/userinfo'
-#c.GenericOAuthenticator.username_key = 'preferred_username'
+c.GenericOAuthenticator.oauth_callback_url = 'http://spinn-20.cs.man.ac.uk:9000/hub/oauth_callback'
+c.GenericOAuthenticator.client_id = 'd3ce651a-e98f-4b90-948f-328d8ad593f2'
+c.GenericOAuthenticator.scope = ['openid']
+c.GenericOAuthenticator.client_secret = 'AJVNOVlsk7BLvJIUKWzq9w4GYR8RIbSpNyvr71JrIFeMbQg0aCU5k_Nr8Adwu9xxYbLK3N8hyDLncMmtW8K3gRo'
+c.GenericOAuthenticator.token_url = 'https://services.humanbrainproject.eu/oidc/token'
+c.GenericOAuthenticator.userdata_url = 'https://services.humanbrainproject.eu/oidc/userinfo'
+c.GenericOAuthenticator.username_key = 'preferred_username'
+c.GenericOAuthenticator.login_service = 'Human Brain Project Credentials'
 
 ## The base URL of the entire application
-#c.JupyterHub.base_url = '/'
+# c.JupyterHub.base_url = '/jupyter/'
 
 ## Whether to shutdown the proxy when the Hub shuts down.
 #  
@@ -97,7 +102,7 @@ c.JupyterHub.FirstUseAuthenticator.dbm_path = 'passwordsgit.dbm'
 #  shutdown the Hub, leaving everything else running.
 #  
 #  The Hub should be able to resume from database state.
-#c.JupyterHub.cleanup_servers = True
+c.JupyterHub.cleanup_servers = False
 
 ## The config file to load
 #c.JupyterHub.config_file = 'jupyterhub_config.py'
@@ -124,7 +129,7 @@ c.JupyterHub.FirstUseAuthenticator.dbm_path = 'passwordsgit.dbm'
 #c.JupyterHub.db_kwargs = {}
 
 ## url for the database. e.g. `sqlite:///jupyterhub.sqlite`
-c.JupyterHub.db_url = 'sqlite:///jupyterhub-git.sqlite'
+#c.JupyterHub.db_url = 'sqlite:///jupyterhub.sqlite'
 
 ## log all database transactions. This has A LOT of output
 #c.JupyterHub.debug_db = False
@@ -149,7 +154,6 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 
 ## The port for this process
 c.JupyterHub.hub_port = 9081
-c.JupyterHub.proxy_api_port = 9001
 
 ## The public facing ip of the whole application (the proxy)
 #c.JupyterHub.ip = ''
@@ -182,7 +186,7 @@ c.JupyterHub.port = 9000
 #c.JupyterHub.proxy_api_ip = '127.0.0.1'
 
 ## The port for the proxy API handlers
-#c.JupyterHub.proxy_api_port = 0
+c.JupyterHub.proxy_api_port = 9001
 
 ## The Proxy Auth token.
 #  
@@ -225,6 +229,12 @@ c.JupyterHub.port = 9000
 #          }
 #      ]
 #c.JupyterHub.services = []
+c.JupyterHub.services = [
+    {
+        'name': 'cull_idle',
+        'api_token': 'cull_idle_token_109586'
+    }
+]
 
 ## The class to use for spawning single-user servers.
 #  
@@ -237,10 +247,8 @@ c.JupyterHub.port = 9000
 
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 #c.DockerSpawner.hub_ip_connect = 'mclb03.cs.man.ac.uk'
-#c.DockerSpawner.hub_ip_connect = '192.168.240.254'
-c.DockerSpawner.hub_ip_connect = 'spinn-test.cs.man.ac.uk'
-c.DockerSpawner.container_image = 'spynnakergit:latest'
-c.DockerSpawner.container_prefix = 'jupyter-git'
+c.DockerSpawner.hub_ip_connect = 'spinn-20.cs.man.ac.uk'
+c.DockerSpawner.container_image = 'spynnakernrp:latest'
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  

@@ -196,8 +196,6 @@ RUN sed -e 's\http://localhost:9000/proxy\../9000/proxy\' -i $HBP/user-scripts/c
 RUN /bin/bash -i -c "./configure_nrp"
 RUN /bin/bash -i -c "cd $HBP/ExDFrontend && npm install --no-save && grunt build"
 RUN /bin/bash -i -c "source $HOME/.opt/platform_venv/bin/activate && pyxbgen -u $HBP/user-scripts/migrate_xmltf/xsd/xml-tf-bibi.xsd -m $HBP/user-scripts/migrate_xmltf/lib/bibi_api_gen && deactivate"
-ADD --chown=jovyan:users fix_nrp.sh $HBP/user-scripts/fix_nrp.sh
-ADD --chown=jovyan:users run_xvfb.sh $HBP/user-scripts/run_xvfb.sh
 
 # Add SpiNNaker to NRP
 WORKDIR $HOME/.opt/platform_venv
@@ -218,6 +216,15 @@ RUN /bin/bash -c "source bin/activate && pip install --trusted-host pypi.org --t
 # Change to working version of NRP
 WORKDIR $HBP
 RUN cd CLE && git remote add agdr https://bitbucket.org/agdr/cle.git && git fetch agdr spinnaker_changes_merge && git checkout spinnaker_changes_merge
+RUN cd ExDBackend && git remote add agdr https://bitbucket.org/agdr/exdbackend.git && git fetch agdr spinnaker_changes_merge && git checkout spinnaker_changes_merge
+
+ADD --chown=jovyan:users fix_nrp.sh $HBP/user-scripts/fix_nrp.sh
+ADD --chown=jovyan:users run_xvfb.sh $HBP/user-scripts/run_xvfb.sh
+
+RUN echo ". $HBP/user-scripts/fix_nrp.sh " >> $HOME/.bashrc
+
+USER root
+RUN sed '/wrapper=""/ i /usr/bin/Xvfb -shmem -screen 0 1280x1024x24 &' -i /usr/local/bin/start-notebook.sh
 
 USER $NB_UID
 WORKDIR $HOME

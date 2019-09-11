@@ -102,7 +102,7 @@ c.GenericOAuthenticator.login_service = 'Human Brain Project Credentials'
 #  shutdown the Hub, leaving everything else running.
 #  
 #  The Hub should be able to resume from database state.
-#c.JupyterHub.cleanup_servers = True
+c.JupyterHub.cleanup_servers = False
 
 ## The config file to load
 #c.JupyterHub.config_file = 'jupyterhub_config.py'
@@ -248,7 +248,7 @@ c.JupyterHub.services = [
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 #c.DockerSpawner.hub_ip_connect = 'mclb03.cs.man.ac.uk'
 c.DockerSpawner.hub_ip_connect = 'spinn-20.cs.man.ac.uk'
-c.DockerSpawner.container_image = 'spynnaker:latest'
+c.DockerSpawner.container_image = 'spynnakernrp:latest'
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  

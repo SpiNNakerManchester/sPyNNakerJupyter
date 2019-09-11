@@ -14,21 +14,21 @@ deactivate () {
         NEURAL_MODELLING_DIRS="$_OLD_NEURAL_MODELLING_DIRS"
         export NEURAL_MODELLING_DIRS
         unset _OLD_NEURAL_MODELLING_DIRS
-    else
+    elif [ ! "${1-}" = "nondestructive" ] ; then
         unset NEURAL_MODELLING_DIRS
     fi
     if ! [ -z "${_OLD_SPINN_DIRS:+_}" ] ; then
         SPINN_DIRS="$_OLD_SPINN_DIRS"
         export SPINN_DIRS
         unset _OLD_SPINN_DIRS
-    else
+    elif [ ! "${1-}" = "nondestructive" ] ; then
         unset SPINN_DIRS
     fi
     if ! [ -z "${_OLD_PERL5LIB:+_}" ] ; then
         PERL5LIB="$_OLD_PERL5LIB"
         export PERL5LIB
         unset _OLD_PERL5LIB
-    else
+    elif [ ! "${1-}" = "nondestructive" ] ; then
         unset PERL5LIB
     fi
     # ! [ -z ${VAR+_} ] returns true if VAR is declared at all

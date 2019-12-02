@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 ARG NB_USER="jovyan"
 ARG NB_UID="1000"
@@ -10,15 +10,17 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y software-properties-common wget sudo
-RUN apt-add-repository ppa:deadsnakes/ppa
-RUN apt-add-repository "deb http://packages.ros.org/ros/ubuntu xenial main"
+RUN wget -O - https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | sudo apt-key add -
+RUN apt-add-repository "deb http://packages.ros.org/ros/ubuntu bionic main"
 RUN wget -O - http://packages.osrfoundation.org/gazebo.key | sudo apt-key add -
-RUN apt-add-repository "deb http://packages.osrfoundation.org/gazebo/ubuntu xenial main"
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+RUN add-apt-repository ppa:openjdk-r/ppa
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-    curl git python python-dev python3.6 python3.6-dev build-essential unzip libxext-dev libsm6 libxrender1 \
+    curl git python python-dev python3.6 python3.6-dev python3.6-tk python3.6-distutils build-essential unzip libxext-dev libsm6 libxrender1 \
     gcc-arm-none-eabi libnewlib-arm-none-eabi \
     bzip2 ca-certificates locales fonts-liberation run-one nano less iputils-ping \
+    openjdk-11-jdk maven \
     && apt-get -y autoremove \
     && apt-get -y clean  \
     && rm -rf /var/lib/apt/lists/*
@@ -121,8 +123,6 @@ ADD --chown=jovyan:users activate $HOME/sPyNNakerGit/bin/
 WORKDIR $HOME/sPyNNakerGit
 RUN git clone https://github.com/SpiNNakerManchester/SupportScripts.git support
 RUN support/install.sh 8 -y
-RUN /bin/bash -c "cd sPyNNaker && git checkout fix_ethernet_control_connection"
-RUN /bin/bash -c "cd sPyNNaker8 && git checkout fix_ethernet_control_connection"
 RUN /bin/bash -c "source bin/activate && cd SpiNNUtils && python setup.py develop"
 RUN /bin/bash -c "source bin/activate && pip install ipykernel matplotlib"
 RUN /bin/bash -c "source bin/activate && support/automatic_make.sh"
@@ -143,7 +143,7 @@ RUN apt-get update && apt-get install -y cmake g++ gcc make curl libz-dev xvfb p
 RUN python3 -m pip install jupyter-server-proxy
 
 # Install the HBP NRP
-RUN apt-get update && apt-get install -y cmake python-h5py python-lxml build-essential doxygen autogen automake libtool autoconf libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev libxslt1-dev zlib1g-dev python-opencv ruby libtar-dev libprotoc-dev protobuf-compiler imagemagick libtinyxml2-dev libffi-dev uwsgi-plugin-python cimg-dev libgnuplot-iostream-dev openssh-client
+RUN apt-get update && apt-get install -y cmake python-h5py python-lxml build-essential doxygen autogen automake libtool autoconf libltdl7-dev libtinyxml-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-docopt libxslt1-dev zlib1g-dev libfreetype6-dev python-opencv ruby libtar-dev libprotoc-dev protobuf-compiler imagemagick libtinyxml2-dev libffi-dev uwsgi-plugin-python cimg-dev libgnuplot-iostream-dev openssh-client
 USER $NB_USER
 ENV HBP=$HOME/Documents/NRP
 ENV NRP_INSTALL_MODE=user
@@ -156,9 +156,10 @@ RUN echo "export PYTHONPATH=" >> $HOME/.bashrc
 RUN echo ". $HBP/user-scripts/nrp_variables" >> $HOME/.bashrc
 RUN echo ". $HBP/user-scripts/nrp_aliases" >> $HOME/.bashrc
 USER root
-RUN apt-get update && apt-get install --allow-unauthenticated -y ros-kinetic-desktop-full ros-kinetic-web-video-server ros-kinetic-control-toolbox ros-kinetic-controller-manager ros-kinetic-transmission-interface ros-kinetic-joint-limits-interface ros-kinetic-rosauth ros-kinetic-smach-ros python-rospkg
-RUN apt-get remove -y --purge gazebo7* libgazebo7* ros-kinetic-gazebo*
-RUN apt-get update && apt-get install -y libignition-math2-dev libignition-transport-dev libignition-transport0-dev
+RUN apt-get update && apt-get install --allow-unauthenticated -y ros-melodic-desktop-full ros-melodic-web-video-server ros-melodic-control-toolbox ros-melodic-controller-manager ros-melodic-transmission-interface ros-melodic-joint-limits-interface ros-melodic-rosauth ros-melodic-smach-ros python-rospkg
+RUN apt-get remove -y --purge gazebo9* libgazebo9* ros-melodic-gazebo*
+RUN rosdep init
+RUN apt-get update && apt-get install -y libignition-math2-dev libignition-transport-dev libignition-transport4-dev
 RUN apt-get update && apt-get install -y libsimbody-dev libgts-dev libgdal-dev ruby-ronn xsltproc graphviz-dev
 RUN apt-get update && apt-get install -y libgsl0-dev bison byacc
 RUN apt-get update && apt-get install -y libgts-dev libjansson-dev
@@ -169,10 +170,10 @@ WORKDIR $HBP/ExDFrontend
 RUN gem install compass
 RUN pip2 install --force-reinstall virtualenv
 USER $NB_USER
+RUN rosdep update
 ENV USER=$NB_USER
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | /bin/bash
 ENV NVM_DIR=$HOME/.nvm
-RUN /bin/bash -i -c "nvm install 0.10"
 RUN /bin/bash -i -c "nvm install 8"
 RUN /bin/bash -i -c "nvm alias default 8"
 RUN /bin/bash -i -c "npm install -g bower"
@@ -202,8 +203,6 @@ WORKDIR $HOME/.opt/platform_venv
 ADD --chown=jovyan:users activate $HOME/.opt/platform_venv/bin/
 RUN git clone https://github.com/SpiNNakerManchester/SupportScripts.git support
 RUN support/install.sh 8 -y
-RUN /bin/bash -c "cd sPyNNaker && git checkout fix_ethernet_control_connection"
-RUN /bin/bash -c "cd sPyNNaker8 && git checkout fix_ethernet_control_connection"
 RUN /bin/bash -c "source bin/activate && cd SpiNNUtils && python setup.py develop"
 RUN /bin/bash -c "source bin/activate && pip install --upgrade pip"
 RUN /bin/bash -c "source bin/activate && pip install ipykernel matplotlib"

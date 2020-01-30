@@ -16,4 +16,5 @@ if [[ $COUNT -eq 0 ]]; then
     cp $HBP/nrpBackendProxy/config.json.sample.local $HBP/nrpBackendProxy/config.json
     sed -e '/storage/ s/Collab/FS/' -i $HBP/nrpBackendProxy/config.json
     sed -e '/authentication/ s/Collab/FS/' -i $HBP/nrpBackendProxy/config.json
+    sed -e 's\"checkEnabled": true,\"checkEnabled": false,\' -i $HBP/user-scripts/config_files/ExDFrontend/config.json.local
 fi

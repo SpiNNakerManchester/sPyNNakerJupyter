@@ -113,7 +113,7 @@ RUN echo "c.InteractiveShellApp.matplotlib = 'notebook'" >> .ipython/profile_spy
 
 RUN python3 -m virtualenv sPyNNaker
 ADD --chown=jovyan:users activate $HOME/sPyNNaker/bin/
-RUN /bin/bash -c "source sPyNNaker/bin/activate && pip install numpy scipy matplotlib"
+RUN /bin/bash -c "source sPyNNaker/bin/activate && pip install numpy scipy matplotlib pyNN==0.9.4"
 RUN /bin/bash -c "source sPyNNaker/bin/activate && pip install ipykernel spynnaker8"
 RUN /bin/bash -c "source sPyNNaker/bin/activate && python -m spynnaker8.setup_pynn"
 RUN /bin/bash -c "source sPyNNaker/bin/activate && python -m ipykernel install --user --name sPyNNaker --profile spynnaker"
@@ -124,7 +124,7 @@ WORKDIR $HOME/sPyNNakerGit
 RUN git clone https://github.com/SpiNNakerManchester/SupportScripts.git support
 RUN support/install.sh 8 -y
 RUN /bin/bash -c "source bin/activate && cd SpiNNUtils && python setup.py develop"
-RUN /bin/bash -c "source bin/activate && pip install ipykernel matplotlib"
+RUN /bin/bash -c "source bin/activate && pip install ipykernel matplotlib pyNN==0.9.4"
 RUN /bin/bash -c "source bin/activate && support/automatic_make.sh"
 RUN /bin/bash -c "source bin/activate && support/setup.sh"
 RUN /bin/bash -c "source bin/activate && python -m spynnaker8.setup_pynn"
@@ -134,6 +134,7 @@ WORKDIR $HOME
 ADD --chown=jovyan:users .spynnaker.cfg /home/$NB_USER
 ADD --chown=jovyan:users SynfireExample.ipynb /home/$NB_USER
 ADD --chown=jovyan:users 01.RunningPyNNSimulations /home/$NB_USER/01.RunningPyNNSimulations
+ADD --chown=jovyan:users 02.LiveInputAndOutput /home/$NB_USER/02.LiveInputAndOutput
 
 # Install things for robotics
 USER root
@@ -205,7 +206,7 @@ RUN git clone https://github.com/SpiNNakerManchester/SupportScripts.git support
 RUN support/install.sh 8 -y
 RUN /bin/bash -c "source bin/activate && cd SpiNNUtils && python setup.py develop"
 RUN /bin/bash -c "source bin/activate && pip install --upgrade pip"
-RUN /bin/bash -c "source bin/activate && pip install ipykernel matplotlib"
+RUN /bin/bash -c "source bin/activate && pip install ipykernel matplotlib pyNN==0.9.4"
 RUN /bin/bash -c "source bin/activate && pip uninstall -y lazyarray"
 RUN /bin/bash -c "source bin/activate && support/automatic_make.sh"
 RUN /bin/bash -c "source bin/activate && support/setup.sh"
@@ -214,8 +215,8 @@ RUN /bin/bash -c "source bin/activate && pip install --trusted-host pypi.org --t
 
 # Change to working version of NRP
 WORKDIR $HBP
-RUN cd CLE && git remote add agdr https://bitbucket.org/agdr/cle.git && git fetch agdr spinnaker_changes_merge && git checkout spinnaker_changes_merge
-RUN cd ExDBackend && git remote add agdr https://bitbucket.org/agdr/exdbackend.git && git fetch agdr spinnaker_changes_merge && git checkout spinnaker_changes_merge
+RUN cd CLE && git remote add agdr https://bitbucket.org/agdr/cle.git && git fetch agdr spinnaker_master18 && git checkout spinnaker_master18
+RUN cd ExDBackend && git remote add agdr https://bitbucket.org/agdr/exdbackend.git && git fetch agdr spinnaker_master18 && git checkout spinnaker_master18
 
 ADD --chown=jovyan:users fix_nrp.sh $HBP/user-scripts/fix_nrp.sh
 ADD --chown=jovyan:users run_xvfb.sh $HBP/user-scripts/run_xvfb.sh
@@ -227,6 +228,9 @@ RUN sed '/wrapper=""/ i /usr/bin/Xvfb -shmem -screen 0 1280x1024x24 &' -i /usr/l
 
 USER $NB_UID
 WORKDIR $HOME
+
+ADD --chown=jovyan:users SpaceInvaders.ipynb /home/$NB_USER
+ADD --chown=jovyan:users 03.NeuroroboticsPlatform /home/$NB_USER/03.NeuroroboticsPlatform
 
 # Make NRP storage visible from within Jupyter
 RUN ln -s $HOME/.opt/nrpStorage nrpStorage

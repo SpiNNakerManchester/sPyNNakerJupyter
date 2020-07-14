@@ -74,14 +74,29 @@ The sPyNNaker setup uses a Docker image launched for each client.  To set this u
 
         docker build -t spynnakerhbpdebug sPyNNakerDockerHBP/
 
+## Configure
 
-## Run JupyterHub
+1. Create folders where the EBRAINS drive should be mounted, and where the local work folder should be mounted.
 
-A start script has been provided:
+1. Update any references to ```/localhome/jupyter``` in the following files to point at the correct locations for where you have installed things:
 
-    start_server_hbp.sh
+    1. ```jupyterhub_config_hbp.py```
 
-Output will be stored in:
+    1. ```run_seafile_mounter.sh```
 
-    server_hbp.out
+    1. ```start_server_hbp.sh``` 
+
+## Run Mounter and JupyterHub
+
+1. Start the mounter:
+
+        start_mounter.sh
+
+    Output is stored in ```mounter.out```
+
+1. Start JupyterHub:
+
+        start_server_hbp.sh
+
+    Output is stored in ```server_hbp.out```
 

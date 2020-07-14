@@ -29,36 +29,36 @@ Checkout the following repositories:
 
 1. This repository:
 
-    git clone https://github.com/SpiNNakerManchester/sPyNNaker8Jupyter
+        git clone https://github.com/SpiNNakerManchester/sPyNNaker8Jupyter
 
 1. DockerSpawner (launches a Docker container from an image for each user):
 
-    git clone https://github.com/SpiNNakerManchester/dockerspawner
-    cd dockerspawner
-    git checkout ports_and_mounts
-    python setup.py develop --user
-    cd ..
+        git clone https://github.com/SpiNNakerManchester/dockerspawner
+        cd dockerspawner
+        git checkout ports_and_mounts
+        python setup.py develop --user
+        cd ..
 
 1. FirstUseAuthenticator (First time a username is used, any password can be used, but that is then kept for future uses):
 
-    cd sPyNNaker8Jupyter
-    git clone https://github.com/SpiNNakerManchester/firstuseauthenticator
-    cd ..
+        cd sPyNNaker8Jupyter
+        git clone https://github.com/SpiNNakerManchester/firstuseauthenticator
+        cd ..
 
 1. MultiAuth (Setup for using FirstUseAuthenticator, HBP OAuth and EBRAINS OAuth)
 
-    git clone https://github.com/SpiNNakerManchester/multiauth
-    cd multiauth
-    python setup.py develop --user
-    cd ..
+        git clone https://github.com/SpiNNakerManchester/multiauth
+        cd multiauth
+        python setup.py develop --user
+        cd ..
 
 1. ClbAuthenticator (EBRAINS authentication with drive mounting):
 
-    git clone https://github.com/SpiNNakerManchester/clb-authenticator
-    cd clb-authenticator
-    git checkout add_drive_mount
-    python setup.py develp --user
-    cd ..
+        git clone https://github.com/SpiNNakerManchester/clb-authenticator
+        cd clb-authenticator
+        git checkout add_drive_mount
+        python setup.py develp --user
+        cd ..
 
 ## Install Docker
 

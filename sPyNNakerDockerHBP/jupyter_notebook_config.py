@@ -53,3 +53,17 @@ distinguished_name = req_distinguished_name
 # the environment
 if 'NB_UMASK' in os.environ:
     os.umask(int(os.environ['NB_UMASK'], 8))
+
+# Allow use in IFrames from Collaboratory
+c.NotebookApp.tornado_settings = {
+    'headers': {
+        'Content-Security-Policy': "frame-ancestors 'self' https://collab.humanbrainproject.eu"
+    }
+}
+
+# Auto-complete
+c.IPCompleter.greedy = True
+
+# Timeout kernels after an hour (checked every minute)
+c.MappingKernelManager.cull_idle_timeout = 60 * 60
+c.MappingKernelManager.cull_interval = 60

@@ -4,6 +4,8 @@
 
 set -e
 
+/usr/bin/Xvfb -shmem -screen 0 1280x1024x24 &
+
 wrapper=""
 if [[ "${RESTARTABLE}" == "yes" ]]; then
   wrapper="run-one-constantly"

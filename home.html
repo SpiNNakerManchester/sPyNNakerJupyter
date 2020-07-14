@@ -1,0 +1,52 @@
+{% extends "page.html" %}
+{% if announcement_home %}
+  {% set announcement = announcement_home %}
+{% endif %}
+
+{% block main %}
+
+<div class="container">
+  <div id="login-main" class="container-fluid">
+  <div class="row">
+    <div class="service-login">
+      <h1><a href="http://spinnakermanchester.github.io/common_pages/5.0.0/How_to_use_Jupyter_notebooks_on_SpiNNaker.pdf">User Guide</a></h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="text-center">
+      {% if user.running %}
+      <a id="stop" role="button" class="btn btn-lg btn-danger" href="/hub/home">Stop My Server</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="row">
+  <p></p>
+  </div>
+  <div class="row">
+    <div class="text-center">
+      <a role="button" class="btn btn-lg btn-primary" href="/user/{{ user.name }}/tree">Jupyter Notebook Interface</a>
+      <a role="button" class="btn btn-lg btn-primary" href="/user/{{ user.name }}/lab">JupyterLab Interface</a>
+    </div>
+  </div>
+  <input type="hidden" id="referrer_box" value=""/>
+</div>
+
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script type="text/javascript">
+require(["home"]);
+document.getElementById("referrer_box").value = document.referrer;
+
+if (document.referrer == "https://collab.humanbrainproject.eu/" || document.referrer.includes("ebrains.eu")) {
+    redirect_to = "/user/{{ user.name }}/lab";
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("start_with")) {
+        redirect_to += "/tree/" + urlParams.get("start_with")
+    }    
+    window.location.href = redirect_to;
+}
+</script>
+{% endblock %}

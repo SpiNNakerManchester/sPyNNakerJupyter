@@ -57,28 +57,40 @@
 #c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
 
 #c.JupyterHub.authenticator_class = 'firstuseauthenticator.FirstUseAuthenticator'
-c.FirstUseAuthenticator.dbm_path = 'passwords.dbm'
 
 # from oauthenticator.generic import GenericOAuthenticator
 # c.JupyterHub.authenticator_class = GenericOAuthenticator
 
 from multiauth.multiauth import MultiAuthenticator
 c.JupyterHub.authenticator_class = MultiAuthenticator
+c.MultiAuthenticator.user_data_location = '/localhome/jupyter/userdata'
 
-#c.OAuthenticator.oauth_callback_url = 'https://services.humanbrainproject.eu/oidc/authorize'
-#c.OAuthenticator.oauth_callback_url = 'http://192.168.240.254:8000/hub/oauth_callback'
-#c.OAuthenticator.oauth_callback_url = 'http://mclb03.cs.man.ac.uk:8000/hub/oauth_callback'
-c.GenericOAuthenticator.oauth_callback_url = 'https://spinn-20.cs.man.ac.uk/hub/oauth_callback'
+from clb_authenticator import ClbAuthenticator
+c.ClbAuthenticator.oauth_callback_url = 'https://spinn-20.cs.man.ac.uk:444/hub/ebrains/oauth_callback'
+c.ClbAuthenticator.client_id = 'spinnaker-jupyter-ebrains'
+c.ClbAuthenticator.scope = ['openid', 'profile', 'clb.drive:read', 'clb.drive:write', 'collab.drive', 'email']
+c.ClbAuthenticator.client_secret = '1fdaf78b-cb2e-4c3e-9f67-19dff013f937'
+c.ClbAuthenticator.token_url = 'https://iam.ebrains.eu/auth/realms/hbp/protocol/openid-connect/token'
+c.ClbAuthenticator.userdata_url = 'https://iam.ebrains.eu/auth/realms/hbp/protocol/openid-connect/userinfo'
+c.ClbAuthenticator.authorize_url = 'https://iam.ebrains.eu/auth/realms/hbp/protocol/openid-connect/auth' 
+c.ClbAuthenticator.username_key = 'preferred_username'
+c.ClbAuthenticator.login_service = 'EBRAINS Credentials'
+c.ClbAuthenticator.drive_url = 'https://drive.ebrains.eu'
+
+c.GenericOAuthenticator.oauth_callback_url = 'https://spinn-20.cs.man.ac.uk:444/hub/hbp/oauth_callback'
 c.GenericOAuthenticator.client_id = 'd3ce651a-e98f-4b90-948f-328d8ad593f2'
 c.GenericOAuthenticator.scope = ['openid']
 c.GenericOAuthenticator.client_secret = 'AJVNOVlsk7BLvJIUKWzq9w4GYR8RIbSpNyvr71JrIFeMbQg0aCU5k_Nr8Adwu9xxYbLK3N8hyDLncMmtW8K3gRo'
 c.GenericOAuthenticator.token_url = 'https://services.humanbrainproject.eu/oidc/token'
 c.GenericOAuthenticator.userdata_url = 'https://services.humanbrainproject.eu/oidc/userinfo'
+c.GenericOAuthenticator.authorize_url = "https://services.humanbrainproject.eu/oidc/authorize"
 c.GenericOAuthenticator.username_key = 'preferred_username'
-c.GenericOAuthenticator.login_service = 'Human Brain Project Credentials'
+c.GenericOAuthenticator.login_service = 'HBP Credentials'
+
+c.FirstUseAuthenticator.dbm_path = 'passwords.dbm'
 
 ## The base URL of the entire application
-# c.JupyterHub.base_url = '/jupyter/'
+#c.JupyterHub.base_url = u'/debug/'
 
 ## Whether to shutdown the proxy when the Hub shuts down.
 #  
@@ -135,7 +147,7 @@ c.JupyterHub.cleanup_servers = False
 #c.JupyterHub.debug_db = False
 
 ## show debug output in configurable-http-proxy
-#c.JupyterHub.debug_proxy = False
+# c.JupyterHub.debug_proxy = False
 
 ## Send JupyterHub's logs to this file.
 #  
@@ -183,7 +195,7 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 #c.JupyterHub.port = 8000
 
 ## The ip for the proxy API handlers
-#c.JupyterHub.proxy_api_ip = '127.0.0.1'
+c.JupyterHub.proxy_api_ip = '0.0.0.0'
 
 ## The port for the proxy API handlers
 #c.JupyterHub.proxy_api_port = 0
@@ -199,7 +211,7 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 ## The command to start the http proxy.
 #  
 #  Only override if configurable-http-proxy is not on your PATH
-#c.JupyterHub.proxy_cmd = ['configurable-http-proxy']
+#c.JupyterHub.proxy_cmd = ['/localhome/jupyter/.nvm/versions/node/v14.4.0/bin/configurable-http-proxy']
 
 ## Purge and reset the database.
 #c.JupyterHub.reset_db = False
@@ -229,10 +241,13 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 #          }
 #      ]
 #c.JupyterHub.services = []
+# Timeout = ‭1,209,600‬ = 14 days
+import sys
 c.JupyterHub.services = [
     {
         'name': 'cull_idle',
-        'api_token': 'cull_idle_token_109586'
+        'admin': True,
+        'command': [sys.executable, '/localhome/jupyter/sPyNNaker8Jupyter/cull_idle_servers.py', '--timeout=1209600'],
     }
 ]
 
@@ -247,8 +262,75 @@ c.JupyterHub.services = [
 
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 #c.DockerSpawner.hub_ip_connect = 'mclb03.cs.man.ac.uk'
-c.DockerSpawner.hub_ip_connect = 'spinn-20.cs.man.ac.uk'
-c.DockerSpawner.container_image = 'spynnakernrp:latest'
+#c.DockerSpawner.hub_ip_connect = 'spinn-20.cs.man.ac.uk'
+#c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
+c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
+
+# Mount the EBRAINS drive (optional) and a work folder (required)
+from docker.types import Mount
+c.DockerSpawner.mounts = [
+    {"target": '/home/spinnaker/drive', 
+     "source": '/localhome/jupyter/drive/{username}',
+     "type": 'bind',
+     "propagation": 'rshared',
+     "optional": True},
+    {"target": '/home/spinnaker/work', 
+     "source": '/localhome/jupyter/userdata/{username}',
+     "type": 'bind',
+     "propagation": 'rprivate'}
+]
+
+# Proxy NRP services
+c.DockerSpawner.proxy_ports = {
+    "nrp": 9000,
+    "nrp_services": 8080
+}
+
+# Add the host:port (or just host) to the environment for use in scripts
+c.DockerSpawner.environment = {
+    "JUPYTERHUB_HOST_PORT": "spinn-20.cs.man.ac.uk:444"
+}
+
+# Add NRP nginx config files, and fix_nrp script after startup
+c.DockerSpawner.post_start_files = {
+    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/nrp-services.conf":
+        "/home/spinnaker/Documents/NRP/user-scripts/config_files/nginx/conf.d/nrp-services.conf",
+    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/frontend.conf":
+        "/home/spinnaker/Documents/NRP/user-scripts/config_files/nginx/conf.d/frontend.conf",
+    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.sh":
+        "/home/spinnaker/Documents/NRP/user-scripts/fix_nrp.sh",
+    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.py":
+        "/home/spinnaker/Documents/NRP/user-scripts/fix_nrp.py",
+    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/nrp-services.conf.jovyan":
+        "/home/jovyan/Documents/NRP/user-scripts/config_files/nginx/conf.d/nrp-services.conf",
+    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/frontend.conf.jovyan":
+        "/home/jovyan/Documents/NRP/user-scripts/config_files/nginx/conf.d/frontend.conf",
+    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.sh.jovyan":
+        "/home/jovyan/Documents/NRP/user-scripts/fix_nrp.sh",
+    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.py.jovyan":
+        "/home/jovyan/Documents/NRP/user-scripts/fix_nrp.py",
+    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/post_run_exec.sh":
+        "/root/post_run_exec.sh"
+}
+
+# Change ownership of config files after startup
+c.DockerSpawner.post_start_cmd = [
+    "/root/post_run_exec.sh"
+]
+
+# A possible way to mount the drive inside the docker, but not working currently
+#import json
+#seccomp_file = "/localhome/jupyter/sPyNNaker8Jupyter/hbp_security.json"
+#with open(seccomp_file) as seccomp_fh:
+#    seccomp_data = json.load(seccomp_fh)
+#c.DockerSpawner.extra_host_config = {
+#    "security_opt": ["seccomp={}".format(json.dumps(seccomp_data))],
+#    "devices": ["/dev/fuse"],
+#    "cap_add": ["SYS_ADMIN"]
+#}
+
+## Don't redirect to the server; ask the user
+c.JupyterHub.redirect_to_server = False
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  
@@ -285,10 +367,14 @@ c.DockerSpawner.container_image = 'spynnakernrp:latest'
 #c.JupyterHub.subdomain_host = ''
 
 ## Paths to search for jinja templates.
-#c.JupyterHub.template_paths = []
+c.JupyterHub.template_paths = ['/localhome/jupyter/sPyNNaker8Jupyter/multiauth/src/multiauth']
 
 ## Extra settings overrides to pass to the tornado application.
-#c.JupyterHub.tornado_settings = {}
+c.JupyterHub.tornado_settings = {
+    'headers': {
+        'Content-Security-Policy': "frame-ancestors 'self' https://collab.humanbrainproject.eu https://*.ebrains.eu"
+    }
+}
 
 #------------------------------------------------------------------------------
 # Spawner(LoggingConfigurable) configuration
@@ -356,7 +442,7 @@ c.DockerSpawner.container_image = 'spynnakernrp:latest'
 #  - You can set `notebook_dir` to `/` and `default_url` to `/home/{username}` to allow people to
 #    navigate the whole filesystem from their notebook, but still start in their home directory.
 #  - You can set this to `/lab` to have JupyterLab start by default, rather than Jupyter Notebook.
-#c.Spawner.default_url = ''
+#c.Spawner.default_url = '/home'
 
 ## Disable per-user configuration of single-user servers.
 #  
@@ -615,3 +701,5 @@ c.Authenticator.admin_users = {'rowley'}
 
 ## The name of the PAM service to use for authentication
 #c.PAMAuthenticator.service = 'login'
+
+c.JupyterHub.shutdown_on_logout = True

@@ -101,3 +101,18 @@ ENV/
 .mypy_cache/
 /.project
 /.pydevproject
+
+# authenticators
+clb-authenticator
+firstuseauthenticator
+multiauth
+
+dockerspawner
+
+*.out
+*.dbm
+*.sqlite
+*.pid
+
+jupyterhub_cookie_secret
+configurable-http-proxy

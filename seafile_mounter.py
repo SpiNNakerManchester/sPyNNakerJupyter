@@ -1,0 +1,124 @@
+import flask
+import os
+import subprocess
+from configparser import ConfigParser
+from flask import request
+import traceback
+import signal
+import argparse
+
+
+app = flask.Flask(__name__)
+app.config["DEBUG"] = True
+
+
+__processes_by_user = dict()
+__mount_dir = None
+__data_dir = None
+__default_drive_config = None
+
+
+def __mkdir(d):
+    if not os.path.exists(d):
+        os.makedirs(d)
+        return True
+    return False
+
+
+@app.route("/mount/<username>")
+def mount(username):
+    global __data_dir
+    global __mount_dir
+    global __processes_by_user
+    global __default_drive_config
+
+    token = request.args.get("token")
+    if token is None:
+        print("No token for {}".format(username))
+        return "Missing token", 500
+
+    user_drive_mnt = os.path.join(__mount_dir, username)
+
+    # Unmount if the directory exists (ignore errors)
+    try:
+        if os.exists(user_drive_mnt):
+            unmount(username)
+    except Exception:
+        pass
+
+    try:
+        # Make directories to do the mounting
+        user_drive_data = os.path.join(__data_dir, username)
+        __mkdir(user_drive_data)
+        __mkdir(user_drive_mnt)
+
+        # Change the permissions on the mount location to work with docker
+        subprocess.run([
+            "sudo", "chown", "1000:100", user_drive_data
+        ])
+
+        # Write the config for mounting the drive
+        user_drive_cfg = os.path.join(user_drive_data, "seadrive.conf")
+        user_drive_data_folder = os.path.join(user_drive_data, "data")
+        config = ConfigParser()
+        config.read(__default_drive_config)
+        config['account']['username'] = username
+        config['account']['token'] = token
+        with open(user_drive_cfg, "w") as configfile:
+            config.write(configfile)
+
+        # Do the mount (fuse)
+        drive_process = subprocess.Popen([
+            "/usr/bin/seadrive", "-c", user_drive_cfg, "-f",
+            "-d", user_drive_data_folder, "-o", "uid=1000,gid=100,allow_other,umask=002",
+            user_drive_mnt])
+        print("Mount done for {} in {}".format(username, user_drive_mnt))
+
+        # Store the process to be cleared later
+        __processes_by_user[username] = drive_process
+    except Exception:
+        traceback.print_exc()
+        return {
+            "result": False,
+            "error": traceback.format_exc()
+        }, 500
+
+    return {"result": True}
+
+
+@app.route("/unmount/<username>")
+def unmount(username):
+    global __processes_by_user
+
+    # If this process didn't do the mount, unmount anyway
+    if username not in __processes_by_user:
+        user_drive_mnt = os.path.join(__mount_dir, username)
+        subprocess.run(["fusermount", "-u", user_drive_mnt])
+        return {"result": True}
+
+    drive_process = __processes_by_user[username]
+    del __processes_by_user[username]
+    drive_process.send_signal(signal.SIGINT)
+    drive_process.wait()
+    del drive_process
+    return {"result": True}
+
+
+parser = argparse.ArgumentParser(
+    description="REST service for mounting Seadrive for docker users")
+parser.add_argument("-m", "--mountdir", required=True,
+                    help="Directory to mount into")
+parser.add_argument("-d", "--datadir", required=True,
+                    help="Directory to store data in")
+parser.add_argument("-c", "--config", required=True,
+                    help="Default config file to fill in")
+parser.add_argument("-p", "--port", required=False, default=5000,
+                    help="Port to listen on")
+
+args = parser.parse_args()
+__mount_dir = args.mountdir
+__data_dir = args.datadir
+__default_drive_config = args.config
+
+app.run(host="0.0.0.0", port=args.port)
+

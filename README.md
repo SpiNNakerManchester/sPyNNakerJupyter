@@ -74,6 +74,10 @@ The sPyNNaker setup uses a Docker image launched for each client.  To set this u
 
         docker build -t spynnakerhbpdebug sPyNNakerDockerHBP/
 
+## Install Seafile Drive Client
+
+Follow instructions at https://help.seafile.com/en/drive_client/drive_client_for_linux.html.
+
 ## Configure
 
 1. Create folders where the EBRAINS drive should be mounted, and where the local work folder should be mounted.

@@ -266,6 +266,9 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 #c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
 c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
 
+# Sometimes it is a bit slow to start an image, so wait a bit longer
+c.DockerSpawner.start_timeout = 600
+
 # Mount the EBRAINS drive (optional) and a work folder (required)
 from docker.types import Mount
 c.DockerSpawner.mounts = [

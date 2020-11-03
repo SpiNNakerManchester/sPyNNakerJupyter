@@ -34,16 +34,17 @@ def mount(username):
 
     token = request.args.get("token")
     if token is None:
-        print("No token for {}".format(username))
+        app.logger.error("No token for {}".format(username))
         return "Missing token", 500
 
     user_drive_mnt = os.path.join(__mount_dir, username)
 
     # Unmount if the directory exists (ignore errors)
     try:
-        if os.exists(user_drive_mnt):
+        if os.path.exists(user_drive_mnt):
             unmount(username)
     except Exception:
+        app.logger.exception("Ignoring unmount error for {}".format(username))
         pass
 
     try:
@@ -53,9 +54,10 @@ def mount(username):
         __mkdir(user_drive_mnt)
 
         # Change the permissions on the mount location to work with docker
-        subprocess.run([
-            "sudo", "chown", "1000:100", user_drive_data
-        ])
+        #subprocess.run([
+        #    "sudo", "chown", "1000:100", user_drive_mnt
+        #])
+
 
         # Write the config for mounting the drive
         user_drive_cfg = os.path.join(user_drive_data, "seadrive.conf")
@@ -68,16 +70,17 @@ def mount(username):
             config.write(configfile)
 
         # Do the mount (fuse)
-        drive_process = subprocess.Popen([
+        app.logger.info("Starting the mount for {} in {}".format(username, user_drive_mnt))
+        drive_process = subprocess.Popen(" ".join([
             "/usr/bin/seadrive", "-c", user_drive_cfg, "-f",
             "-d", user_drive_data_folder, "-o", "uid=1000,gid=100,allow_other,umask=002",
-            user_drive_mnt])
-        print("Mount done for {} in {}".format(username, user_drive_mnt))
+            user_drive_mnt]), shell=True)
+        app.logger.info("Mount done for {} in {}".format(username, user_drive_mnt))
 
         # Store the process to be cleared later
         __processes_by_user[username] = drive_process
     except Exception:
-        traceback.print_exc()
+        app.logger.exception("Error mounting for {}".format(username))
         return {
             "result": False,
             "error": traceback.format_exc()
@@ -90,17 +93,20 @@ def mount(username):
 def unmount(username):
     global __processes_by_user
 
-    # If this process didn't do the mount, unmount anyway
-    if username not in __processes_by_user:
-        user_drive_mnt = os.path.join(__mount_dir, username)
-        subprocess.run(["fusermount", "-u", user_drive_mnt])
-        return {"result": True}
+    # Unmount using fusermount
+    app.logger.info("Unmounting for {} using fusermount".format(username))
+    user_drive_mnt = os.path.join(__mount_dir, username)
+    subprocess.run(["fusermount", "-u", user_drive_mnt])
 
-    drive_process = __processes_by_user[username]
-    del __processes_by_user[username]
-    drive_process.send_signal(signal.SIGINT)
-    drive_process.wait()
-    del drive_process
+    # If the process was started here, stop it now
+    if username in __processes_by_user:
+        app.logger.info("Stopping mount process for {}".format(username))
+        drive_process = __processes_by_user[username]
+        del __processes_by_user[username]
+        drive_process.send_signal(signal.SIGINT)
+        drive_process.wait()
+        del drive_process
+
     return {"result": True}
 
 

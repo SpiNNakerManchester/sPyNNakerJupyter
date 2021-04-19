@@ -264,20 +264,39 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 #c.DockerSpawner.hub_ip_connect = 'mclb03.cs.man.ac.uk'
 #c.DockerSpawner.hub_ip_connect = 'spinn-20.cs.man.ac.uk'
 #c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
-c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
+c.DockerSpawner.image = 'spynnakernrpjupyter:latest'
 
 # Sometimes it is a bit slow to start an image, so wait a bit longer
-c.DockerSpawner.start_timeout = 600
+c.DockerSpawner.start_timeout = 1200
+c.DockerSpawner.http_timeout = 1200
 
 # Mount the EBRAINS drive (optional) and a work folder (required)
 from docker.types import Mount
 c.DockerSpawner.mounts = [
-    {"target": '/home/spinnaker/drive', 
+    {"target": '/home/bbpnrsoa/drive',
      "source": '/localhome/jupyter/drive/{username}',
      "type": 'bind',
      "propagation": 'rshared',
      "optional": True},
-    {"target": '/home/spinnaker/work', 
+    {"target": '/home/spinnaker/drive',
+     "source": '/localhome/jupyter/drive/{username}',
+     "type": 'bind',
+     "propagation": 'rshared',
+     "optional": True},
+    {"target": '/home/jovyan/drive',
+     "source": '/localhome/jupyter/drive/{username}',
+     "type": 'bind',
+     "propagation": 'rshared',
+     "optional": True},
+    {"target": '/home/bbpnrsoa/work',
+     "source": '/localhome/jupyter/userdata/{username}',
+     "type": 'bind',
+     "propagation": 'rprivate'},
+    {"target": '/home/spinnaker/work',
+     "source": '/localhome/jupyter/userdata/{username}',
+     "type": 'bind',
+     "propagation": 'rprivate'},
+    {"target": '/home/jovyan/work',
      "source": '/localhome/jupyter/userdata/{username}',
      "type": 'bind',
      "propagation": 'rprivate'}
@@ -296,24 +315,13 @@ c.DockerSpawner.environment = {
 
 # Add NRP nginx config files, and fix_nrp script after startup
 c.DockerSpawner.post_start_files = {
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/nrp-services.conf":
-        "/home/spinnaker/Documents/NRP/user-scripts/config_files/nginx/conf.d/nrp-services.conf",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/frontend.conf":
-        "/home/spinnaker/Documents/NRP/user-scripts/config_files/nginx/conf.d/frontend.conf",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.sh":
-        "/home/spinnaker/Documents/NRP/user-scripts/fix_nrp.sh",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.py":
-        "/home/spinnaker/Documents/NRP/user-scripts/fix_nrp.py",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/nrp-services.conf.jovyan":
-        "/home/jovyan/Documents/NRP/user-scripts/config_files/nginx/conf.d/nrp-services.conf",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/frontend.conf.jovyan":
-        "/home/jovyan/Documents/NRP/user-scripts/config_files/nginx/conf.d/frontend.conf",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.sh.jovyan":
-        "/home/jovyan/Documents/NRP/user-scripts/fix_nrp.sh",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.py.jovyan":
-        "/home/jovyan/Documents/NRP/user-scripts/fix_nrp.py",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/post_run_exec.sh":
-        "/root/post_run_exec.sh"
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/nrp-services.conf.spinnaker": "/root/nrp-services.conf.spinnaker",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/frontend.conf.spinnaker": "/root/frontend.conf.spinnaker",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/nrp-services.conf.jovyan": "/root/nrp-services.conf.jovyan",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/frontend.conf.jovyan": "/root/frontend.conf.jovyan",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/fix_nrp.sh": "/root/fix_nrp.sh",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/fix_nrp.py": "/root/fix_nrp.py",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/post_run_exec.sh": "/root/post_run_exec.sh"
 }
 
 # Change ownership of config files after startup
@@ -570,7 +578,8 @@ c.JupyterHub.tornado_settings = {
 #  respond. Callers of spawner.start will assume that startup has failed if it
 #  takes longer than this. start should return when the server process is started
 #  and its location is known.
-#c.Spawner.start_timeout = 60
+c.Spawner.start_timeout = 1200
+c.Spawner.http_timeout = 1200
 
 #------------------------------------------------------------------------------
 # LocalProcessSpawner(Spawner) configuration

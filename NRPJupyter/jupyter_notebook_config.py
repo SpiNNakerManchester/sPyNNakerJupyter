@@ -57,7 +57,7 @@ if 'NB_UMASK' in os.environ:
 # Allow use in IFrames from Collaboratory
 c.NotebookApp.tornado_settings = {
     'headers': {
-        'Content-Security-Policy': "frame-ancestors 'self' https://collab.humanbrainproject.eu"
+        'Content-Security-Policy': "frame-ancestors 'self' https://collab.humanbrainproject.eu https://*.ebrains.eu"
     }
 }
 

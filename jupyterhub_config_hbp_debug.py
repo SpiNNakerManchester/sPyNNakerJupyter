@@ -103,7 +103,7 @@ c.FirstUseAuthenticator.dbm_path = 'passwords.dbm'
 #  only shutdown the Hub, leaving everything else running.
 #  
 #  The Hub should be able to resume from database state.
-#c.JupyterHub.cleanup_proxy = True
+c.JupyterHub.cleanup_proxy = False
 
 ## Whether to shutdown single-user servers when the Hub shuts down.
 #  
@@ -264,17 +264,35 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 #c.DockerSpawner.hub_ip_connect = 'mclb03.cs.man.ac.uk'
 #c.DockerSpawner.hub_ip_connect = 'spinn-20.cs.man.ac.uk'
 #c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
-c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
+c.DockerSpawner.image = 'spynnakerdockernrptest:latest'
 
 # Mount the EBRAINS drive (optional) and a work folder (required)
 from docker.types import Mount
 c.DockerSpawner.mounts = [
+    {"target": '/home/bbpnrsoa/drive', 
+     "source": '/localhome/jupyter/drive/{username}',
+     "type": 'bind',
+     "propagation": 'rshared',
+     "optional": True},
     {"target": '/home/spinnaker/drive', 
      "source": '/localhome/jupyter/drive/{username}',
      "type": 'bind',
      "propagation": 'rshared',
      "optional": True},
+    {"target": '/home/jovyan/drive', 
+     "source": '/localhome/jupyter/drive/{username}',
+     "type": 'bind',
+     "propagation": 'rshared',
+     "optional": True},
+    {"target": '/home/bbpnrsoa/work', 
+     "source": '/localhome/jupyter/userdata/{username}',
+     "type": 'bind',
+     "propagation": 'rprivate'},
     {"target": '/home/spinnaker/work', 
+     "source": '/localhome/jupyter/userdata/{username}',
+     "type": 'bind',
+     "propagation": 'rprivate'},
+    {"target": '/home/jovyan/work', 
      "source": '/localhome/jupyter/userdata/{username}',
      "type": 'bind',
      "propagation": 'rprivate'}
@@ -293,24 +311,13 @@ c.DockerSpawner.environment = {
 
 # Add NRP nginx config files, and fix_nrp script after startup
 c.DockerSpawner.post_start_files = {
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/nrp-services.conf":
-        "/home/spinnaker/Documents/NRP/user-scripts/config_files/nginx/conf.d/nrp-services.conf",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/frontend.conf":
-        "/home/spinnaker/Documents/NRP/user-scripts/config_files/nginx/conf.d/frontend.conf",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.sh":
-        "/home/spinnaker/Documents/NRP/user-scripts/fix_nrp.sh",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.py":
-        "/home/spinnaker/Documents/NRP/user-scripts/fix_nrp.py",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/nrp-services.conf.jovyan":
-        "/home/jovyan/Documents/NRP/user-scripts/config_files/nginx/conf.d/nrp-services.conf",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/frontend.conf.jovyan":
-        "/home/jovyan/Documents/NRP/user-scripts/config_files/nginx/conf.d/frontend.conf",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.sh.jovyan":
-        "/home/jovyan/Documents/NRP/user-scripts/fix_nrp.sh",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/fix_nrp.py.jovyan":
-        "/home/jovyan/Documents/NRP/user-scripts/fix_nrp.py",
-    "/localhome/jupyter/sPyNNaker8Jupyter/sPyNNakerDockerHBP/post_run_exec.sh":
-        "/root/post_run_exec.sh"
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/nrp-services.conf.spinnaker": "/root/nrp-services.conf.spinnaker",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/frontend.conf.spinnaker": "/root/frontend.conf.spinnaker",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/nrp-services.conf.jovyan": "/root/nrp-services.conf.jovyan",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/frontend.conf.jovyan": "/root/frontend.conf.jovyan",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/fix_nrp.sh": "/root/fix_nrp.sh",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/fix_nrp.py": "/root/fix_nrp.py",
+    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/post_run_exec.sh": "/root/post_run_exec.sh"
 }
 
 # Change ownership of config files after startup

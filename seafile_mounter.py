@@ -73,7 +73,7 @@ def mount(username):
         app.logger.info("Starting the mount for {} in {}".format(username, user_drive_mnt))
         drive_process = subprocess.Popen(" ".join([
             "/usr/bin/seadrive", "-c", user_drive_cfg, "-f",
-            "-d", user_drive_data_folder, "-o", "uid=1000,gid=100,allow_other,umask=002",
+            "-d", user_drive_data_folder, "-o", "uid=901325,gid=11860,allow_other,umask=002",
             user_drive_mnt]), shell=True)
         app.logger.info("Mount done for {} in {}".format(username, user_drive_mnt))
 

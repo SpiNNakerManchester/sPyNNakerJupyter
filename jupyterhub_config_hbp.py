@@ -267,8 +267,10 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 c.DockerSpawner.image = 'spynnakernrpjupyter:latest'
 
 # Sometimes it is a bit slow to start an image, so wait a bit longer
-c.DockerSpawner.start_timeout = 1200
-c.DockerSpawner.http_timeout = 1200
+SPAWN_TIMEOUT = 30 * 60
+c.DockerSpawner.start_timeout = SPAWN_TIMEOUT
+c.DockerSpawner.http_timeout = SPAWN_TIMEOUT
+c.DockerSpawner.client_kwargs = {"timeout": SPAWN_TIMEOUT}
 
 # Mount the EBRAINS drive (optional) and a work folder (required)
 from docker.types import Mount
@@ -578,8 +580,8 @@ c.JupyterHub.tornado_settings = {
 #  respond. Callers of spawner.start will assume that startup has failed if it
 #  takes longer than this. start should return when the server process is started
 #  and its location is known.
-c.Spawner.start_timeout = 1200
-c.Spawner.http_timeout = 1200
+c.Spawner.start_timeout = SPAWN_TIMEOUT
+c.Spawner.http_timeout = SPAWN_TIMEOUT
 
 #------------------------------------------------------------------------------
 # LocalProcessSpawner(Spawner) configuration

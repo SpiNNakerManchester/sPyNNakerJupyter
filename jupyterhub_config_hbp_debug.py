@@ -64,6 +64,8 @@
 from multiauth.multiauth import MultiAuthenticator
 c.JupyterHub.authenticator_class = MultiAuthenticator
 c.MultiAuthenticator.user_data_location = '/localhome/jupyter/userdata'
+c.MultiAuthenticator.user_data_user = "901325"
+c.MultiAuthenticator.user_data_group = "11860"
 
 from clb_authenticator import ClbAuthenticator
 c.ClbAuthenticator.oauth_callback_url = 'https://spinn-20.cs.man.ac.uk:444/hub/ebrains/oauth_callback'
@@ -264,35 +266,42 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 #c.DockerSpawner.hub_ip_connect = 'mclb03.cs.man.ac.uk'
 #c.DockerSpawner.hub_ip_connect = 'spinn-20.cs.man.ac.uk'
 #c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
-c.DockerSpawner.image = 'spynnakerdockernrptest:latest'
+c.DockerSpawner.image = 'spynnakernrpjupytertest:latest'
+# c.DockerSpawner.image = 'spynnakernrpjupyter:latest'
+
+# Sometimes it is a bit slow to start an image, so wait a bit longer
+SPAWN_TIMEOUT = 30 * 60
+c.DockerSpawner.start_timeout = SPAWN_TIMEOUT
+c.DockerSpawner.http_timeout = SPAWN_TIMEOUT
+c.DockerSpawner.client_kwargs = {"timeout": SPAWN_TIMEOUT}
 
 # Mount the EBRAINS drive (optional) and a work folder (required)
 from docker.types import Mount
 c.DockerSpawner.mounts = [
-    {"target": '/home/bbpnrsoa/drive', 
+    {"target": '/home/bbpnrsoa/drive',
      "source": '/localhome/jupyter/drive/{username}',
      "type": 'bind',
      "propagation": 'rshared',
      "optional": True},
-    {"target": '/home/spinnaker/drive', 
+    {"target": '/home/spinnaker/drive',
      "source": '/localhome/jupyter/drive/{username}',
      "type": 'bind',
      "propagation": 'rshared',
      "optional": True},
-    {"target": '/home/jovyan/drive', 
+    {"target": '/home/jovyan/drive',
      "source": '/localhome/jupyter/drive/{username}',
      "type": 'bind',
      "propagation": 'rshared',
      "optional": True},
-    {"target": '/home/bbpnrsoa/work', 
+    {"target": '/home/bbpnrsoa/work',
      "source": '/localhome/jupyter/userdata/{username}',
      "type": 'bind',
      "propagation": 'rprivate'},
-    {"target": '/home/spinnaker/work', 
+    {"target": '/home/spinnaker/work',
      "source": '/localhome/jupyter/userdata/{username}',
      "type": 'bind',
      "propagation": 'rprivate'},
-    {"target": '/home/jovyan/work', 
+    {"target": '/home/jovyan/work',
      "source": '/localhome/jupyter/userdata/{username}',
      "type": 'bind',
      "propagation": 'rprivate'}
@@ -574,7 +583,8 @@ c.JupyterHub.tornado_settings = {
 #  respond. Callers of spawner.start will assume that startup has failed if it
 #  takes longer than this. start should return when the server process is started
 #  and its location is known.
-#c.Spawner.start_timeout = 60
+c.Spawner.start_timeout = SPAWN_TIMEOUT
+c.Spawner.http_timeout = SPAWN_TIMEOUT
 
 #------------------------------------------------------------------------------
 # LocalProcessSpawner(Spawner) configuration

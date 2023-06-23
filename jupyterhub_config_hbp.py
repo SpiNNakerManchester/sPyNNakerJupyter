@@ -64,6 +64,8 @@
 from multiauth.multiauth import MultiAuthenticator
 c.JupyterHub.authenticator_class = MultiAuthenticator
 c.MultiAuthenticator.user_data_location = '/localhome/jupyter/userdata'
+c.MultiAuthenticator.user_data_user = "901325"
+c.MultiAuthenticator.user_data_group = "11860"
 
 from clb_authenticator import ClbAuthenticator
 c.ClbAuthenticator.oauth_callback_url = 'https://spinn-20.cs.man.ac.uk/hub/ebrains/oauth_callback'

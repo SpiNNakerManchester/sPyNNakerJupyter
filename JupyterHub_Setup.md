@@ -8,7 +8,7 @@ This means that in demonstrations, users can access a SpiNNaker installation and
 ### Installing JupyterHub
 Make sure all services are installed into the system as **root** instead of into a user directory so that all users can access it.
 
-- Install [Jupyter](http://jupyter.org/install.html) using `pip3` and `sudo` to ensure that Jupyter runs from a Python3 installation. Do not use Anaconda as it creates a Python installation in the local user directory.
+- Install [Jupyter](https://jupyter.org/install.html) using `pip3` and `sudo` to ensure that Jupyter runs from a Python3 installation. Do not use Anaconda as it creates a Python installation in the local user directory.
 - Install [JupyterHub](https://jupyterhub.readthedocs.io/en/latest/) - requires Python3.4 or greater.
 - [Create](https://jupyterhub.readthedocs.io/en/latest/config-basics.html) a `jupyter_config.py` file and [add your user as admin](https://jupyterhub.readthedocs.io/en/latest/authenticators-users-basics.html)
 - Start JupyterHub by running `sudo jupyterhub` from the folder which contains the config file.

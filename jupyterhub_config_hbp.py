@@ -266,6 +266,7 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 #c.DockerSpawner.hub_ip_connect = 'mclb03.cs.man.ac.uk'
 #c.DockerSpawner.hub_ip_connect = 'spinn-20.cs.man.ac.uk'
 #c.DockerSpawner.image = 'spynnakerhbpdebug:latest'
+c.DockerSpawner.hub_ip_connect = '172.17.0.1'
 c.DockerSpawner.image = 'spynnakernrpjupyter:latest'
 
 # Sometimes it is a bit slow to start an image, so wait a bit longer
@@ -305,6 +306,10 @@ c.DockerSpawner.mounts = [
      "type": 'bind',
      "propagation": 'rprivate'}
 ]
+
+c.DockerSpawner.user_data_location = '/localhome/jupyter/userdata'
+c.DockerSpawner.user_data_user = "901325"
+c.DockerSpawner.user_data_group = "11860"
 
 # Proxy NRP services
 c.DockerSpawner.proxy_ports = {

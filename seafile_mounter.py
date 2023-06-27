@@ -25,11 +25,10 @@ def __mkdir(d):
     return False
 
 
-@app.route("/mount/<username>")
-def mount(username):
+@app.route("/prepare/<username>")
+def prepare(username):
     global __data_dir
     global __mount_dir
-    global __processes_by_user
     global __default_drive_config
 
     token = request.args.get("token")
@@ -53,21 +52,36 @@ def mount(username):
         __mkdir(user_drive_data)
         __mkdir(user_drive_mnt)
 
-        # Change the permissions on the mount location to work with docker
-        #subprocess.run([
-        #    "sudo", "chown", "1000:100", user_drive_mnt
-        #])
-
-
         # Write the config for mounting the drive
         user_drive_cfg = os.path.join(user_drive_data, "seadrive.conf")
-        user_drive_data_folder = os.path.join(user_drive_data, "data")
         config = ConfigParser()
         config.read(__default_drive_config)
         config['account']['username'] = username
         config['account']['token'] = token
         with open(user_drive_cfg, "w") as configfile:
             config.write(configfile)
+
+    except Exception:
+        app.logger.exception("Error mounting for {}".format(username))
+        return {
+            "result": False,
+            "error": traceback.format_exc()
+        }, 500
+
+    return {"result": True}
+
+
+@app.route("/mount/<username>")
+def mount(username):
+    global __processes_by_user
+    global __data_dir
+    global __mount_dir
+
+    try:
+        user_drive_mnt = os.path.join(__mount_dir, username)
+        user_drive_data = os.path.join(__data_dir, username)
+        user_drive_cfg = os.path.join(user_drive_data, "seadrive.conf")
+        user_drive_data_folder = os.path.join(user_drive_data, "data")
 
         # Do the mount (fuse)
         app.logger.info("Starting the mount for {} in {}".format(username, user_drive_mnt))
@@ -79,13 +93,14 @@ def mount(username):
 
         # Store the process to be cleared later
         __processes_by_user[username] = drive_process
+
     except Exception:
         app.logger.exception("Error mounting for {}".format(username))
         return {
             "result": False,
             "error": traceback.format_exc()
         }, 500
-
+    
     return {"result": True}
 
 

@@ -41,7 +41,7 @@ Checkout the following repositories:
 
 1. FirstUseAuthenticator (First time a username is used, any password can be used, but that is then kept for future uses):
 
-        cd sPyNNaker8Jupyter
+        cd sPyNNakerJupyter
         git clone https://github.com/SpiNNakerManchester/firstuseauthenticator
         cd ..
 

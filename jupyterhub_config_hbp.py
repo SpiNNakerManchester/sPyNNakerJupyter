@@ -249,7 +249,7 @@ c.JupyterHub.services = [
     {
         'name': 'cull_idle',
         'admin': True,
-        'command': [sys.executable, '/localhome/jupyter/sPyNNaker8Jupyter/cull_idle_servers.py', '--timeout=1209600'],
+        'command': [sys.executable, '/localhome/jupyter/sPyNNakerJupyter/cull_idle_servers.py', '--timeout=1209600'],
     }
 ]
 
@@ -324,13 +324,13 @@ c.DockerSpawner.environment = {
 
 # Add NRP nginx config files, and fix_nrp script after startup
 c.DockerSpawner.post_start_files = {
-    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/nrp-services.conf.spinnaker": "/root/nrp-services.conf.spinnaker",
-    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/frontend.conf.spinnaker": "/root/frontend.conf.spinnaker",
-    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/nrp-services.conf.jovyan": "/root/nrp-services.conf.jovyan",
-    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/frontend.conf.jovyan": "/root/frontend.conf.jovyan",
-    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/fix_nrp.sh": "/root/fix_nrp.sh",
-    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/fix_nrp.py": "/root/fix_nrp.py",
-    "/localhome/jupyter/sPyNNaker8Jupyter/post-run-exec/post_run_exec.sh": "/root/post_run_exec.sh"
+    "/localhome/jupyter/sPyNNakerJupyter/post-run-exec/nrp-services.conf.spinnaker": "/root/nrp-services.conf.spinnaker",
+    "/localhome/jupyter/sPyNNakerJupyter/post-run-exec/frontend.conf.spinnaker": "/root/frontend.conf.spinnaker",
+    "/localhome/jupyter/sPyNNakerJupyter/post-run-exec/nrp-services.conf.jovyan": "/root/nrp-services.conf.jovyan",
+    "/localhome/jupyter/sPyNNakerJupyter/post-run-exec/frontend.conf.jovyan": "/root/frontend.conf.jovyan",
+    "/localhome/jupyter/sPyNNakerJupyter/post-run-exec/fix_nrp.sh": "/root/fix_nrp.sh",
+    "/localhome/jupyter/sPyNNakerJupyter/post-run-exec/fix_nrp.py": "/root/fix_nrp.py",
+    "/localhome/jupyter/sPyNNakerJupyter/post-run-exec/post_run_exec.sh": "/root/post_run_exec.sh"
 }
 
 # Change ownership of config files after startup
@@ -340,7 +340,7 @@ c.DockerSpawner.post_start_cmd = [
 
 # A possible way to mount the drive inside the docker, but not working currently
 #import json
-#seccomp_file = "/localhome/jupyter/sPyNNaker8Jupyter/hbp_security.json"
+#seccomp_file = "/localhome/jupyter/sPyNNakerJupyter/hbp_security.json"
 #with open(seccomp_file) as seccomp_fh:
 #    seccomp_data = json.load(seccomp_fh)
 #c.DockerSpawner.extra_host_config = {
@@ -387,7 +387,7 @@ c.JupyterHub.redirect_to_server = False
 #c.JupyterHub.subdomain_host = ''
 
 ## Paths to search for jinja templates.
-c.JupyterHub.template_paths = ['/localhome/jupyter/sPyNNaker8Jupyter/multiauth/src/multiauth']
+c.JupyterHub.template_paths = ['/localhome/jupyter/sPyNNakerJupyter/multiauth/src/multiauth']
 
 ## Extra settings overrides to pass to the tornado application.
 c.JupyterHub.tornado_settings = {

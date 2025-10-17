@@ -68,7 +68,7 @@ The sPyNNaker setup uses a Docker image launched for each client.  To set this u
 
         sudo apt-get install docker.io
 
-1. Check the ```.spynnaker.cfg``` file contains the appropriate values for your setup.  You should have a [spalloc server](https://spalloc_server.readthedocs.io/en/7.4.1) set up, and you should update the address of this in the config file.
+1. Check the ```.spynnaker.cfg``` file contains the appropriate values for your setup.  You should have a [spalloc server](https://spalloc_server.readthedocs.io/en/latest) set up, and you should update the address of this in the config file.
 
 1. Set up the docker image:
 
